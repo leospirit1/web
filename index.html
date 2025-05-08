@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>完整版随机选择器</title>
+    <title>随机选择器</title>
     <style>
+        /* 亮色主题变量 */
         :root {
             --primary-color: #4361ee;
             --secondary-color: #3f37c9;
@@ -14,9 +15,20 @@
             --background-color: #f8f9fa;
             --card-bg: #ffffff;
             --text-color: #333333;
-            --border-radius: 12px;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
+            --border-color: #ddd;
+        }
+
+        /* 暗色主题变量 */
+        .dark-mode {
+            --primary-color: #6c8eff;
+            --secondary-color: #5a63ff;
+            --accent-color: #70d7ff;
+            --danger-color: #ff6b6b;
+            --success-color: #4caf50;
+            --background-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --border-color: #444;
         }
 
         * {
@@ -34,6 +46,7 @@
             flex-direction: column;
             align-items: center;
             padding: 2rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .container {
@@ -42,30 +55,36 @@
             display: flex;
             flex-direction: column;
             gap: 2rem;
+            position: relative;
         }
 
         header {
             text-align: center;
             margin-bottom: 1rem;
+            position: relative;
         }
 
         h1 {
             color: var(--primary-color);
             margin-bottom: 0.5rem;
             font-weight: 600;
+            transition: color 0.3s ease;
         }
 
         .description {
-            color: #666;
+            color: var(--text-color);
+            opacity: 0.7;
             font-size: 1rem;
+            font-style: italic;
+            transition: color 0.3s ease;
         }
 
         .card {
             background-color: var(--card-bg);
-            border-radius: var(--border-radius);
+            border-radius: 12px;
             padding: 2rem;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
         }
 
         .card:hover {
@@ -82,15 +101,18 @@
             margin-bottom: 0.5rem;
             font-weight: 500;
             color: var(--primary-color);
+            transition: color 0.3s ease;
         }
 
         input, select {
             width: 100%;
             padding: 0.75rem 1rem;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
             border-radius: 6px;
             font-size: 1rem;
-            transition: var(--transition);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
         }
 
         input:focus, select:focus {
@@ -108,7 +130,7 @@
             font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
-            transition: var(--transition);
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
         .btn:hover {
@@ -121,7 +143,8 @@
         }
 
         .btn-accent:hover {
-            background-color: #3da8cb;
+            background-color: var(--accent-color);
+            opacity: 0.9;
         }
 
         .btn-danger {
@@ -129,7 +152,8 @@
         }
 
         .btn-danger:hover {
-            background-color: #d32f2f;
+            background-color: var(--danger-color);
+            opacity: 0.9;
         }
 
         .result-section {
@@ -146,6 +170,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: color 0.3s ease;
         }
 
         .result-animation {
@@ -180,24 +205,25 @@
             }
         }
 
-        .history {
-            margin-top: 2rem;
-        }
-
         .history-title {
             color: var(--primary-color);
             margin-bottom: 1rem;
             text-align: center;
             font-weight: 500;
+            transition: color 0.3s ease;
         }
 
         .history-list {
-            list-style: none;
             max-height: 200px;
             overflow-y: auto;
             padding: 0.5rem;
             border-radius: 6px;
             background-color: rgba(67, 97, 238, 0.05);
+            transition: background-color 0.3s ease;
+        }
+
+        .dark-mode .history-list {
+            background-color: rgba(108, 142, 255, 0.05);
         }
 
         .history-item {
@@ -207,6 +233,11 @@
             background-color: rgba(67, 97, 238, 0.1);
             display: flex;
             justify-content: space-between;
+            transition: background-color 0.3s ease;
+        }
+
+        .dark-mode .history-item {
+            background-color: rgba(108, 142, 255, 0.1);
         }
 
         .history-item:last-child {
@@ -215,6 +246,10 @@
         
         .highlight-history {
             background-color: rgba(76, 175, 80, 0.2);
+        }
+
+        .dark-mode .highlight-history {
+            background-color: rgba(76, 175, 80, 0.15);
         }
 
         .button-container {
@@ -226,18 +261,47 @@
 
         .preset-item {
             display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
             align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
         }
 
-        .delete-btn {
-            color: var(--danger-color);
+        .preset-remove {
             background: none;
             border: none;
+            color: var(--danger-color);
+            font-size: 18px;
             cursor: pointer;
-            font-size: 1.2rem;
-            padding: 0.2rem;
+            padding: 0;
+            width: auto;
+        }
+
+        .preset-container {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
         }
 
         @media (max-width: 768px) {
@@ -252,395 +316,347 @@
             .result-display {
                 font-size: 3rem;
             }
+            
+            .theme-toggle {
+                top: 0;
+                right: 10px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>随机学生选择器</h1>
-            <p class="description">公平、随机地选择学生</p>
+            <h1>随机选择器</h1>
+            <p class="description">design by leo</p>
+            <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()">🌙</button>
         </header>
 
-        <div class="card">
-            <div id="configPanel">
-                <div class="form-group">
-                    <label for="totalStudents">总学生数</label>
-                    <input type="number" id="totalStudents" min="1" max="100" value="30">
-                </div>
+        <div class="card" id="configPanel">
+            <div class="form-group">
+                <label for="totalStudents">总学生数</label>
+                <input type="number" id="totalStudents" min="1" max="100" value="30">
+            </div>
 
-                <div class="form-group">
-                    <label for="rounds">轮数</label>
-                    <input type="number" id="rounds" min="1" max="10" value="3">
-                </div>
+            <div class="form-group">
+                <label for="rounds">轮数</label>
+                <input type="number" id="rounds" min="1" max="10" value="3" onchange="updateRoundOptions()" oninput="updateRoundOptions()">
+            </div>
 
-                <div class="form-group">
-                    <label>指定学生（可选）</label>
-                    <div id="presetContainer">
-                        <!-- 预设项将在这里添加 -->
-                    </div>
-                    <button id="addPresetBtn" class="btn btn-accent" style="margin-top: 10px;">添加预设</button>
+            <div class="form-group">
+                <label>指定学生号码（可选）</label>
+                <div id="presetContainer" class="preset-container">
+                    <!-- 预设项将在这里动态添加 -->
                 </div>
+                <button class="btn btn-accent" onclick="addPreset()">添加预设</button>
             </div>
 
             <div class="button-container">
-                <button id="setupBtn" class="btn">设置并开始</button>
-            </div>
-
-            <div class="result-section">
-                <div class="result-display" id="resultDisplay">?</div>
+                <button id="setupBtn" class="btn" onclick="switchToDrawMode()">设置并开始</button>
             </div>
         </div>
 
-        <div class="card history">
+        <div class="card" id="drawCard" style="display: none;">
+            <div class="result-display" id="resultDisplay">?</div>
+
+            <div class="button-container">
+                <button class="btn" onclick="draw()">开始抽号</button>
+                <button class="btn btn-danger" onclick="switchToSettingsMode()">结束抽号</button>
+            </div>
+        </div>
+
+        <div class="card">
             <h3 class="history-title">历史记录</h3>
-            <ul class="history-list" id="historyList"></ul>
+            <div class="history-list" id="historyList"></div>
         </div>
     </div>
 
     <script>
-        window.onload = function() {
-            // 基本元素
-            const totalStudentsInput = document.getElementById('totalStudents');
-            const roundsInput = document.getElementById('rounds');
-            const setupBtn = document.getElementById('setupBtn');
-            const resultDisplay = document.getElementById('resultDisplay');
-            const historyList = document.getElementById('historyList');
-            const configPanel = document.getElementById('configPanel');
-            const buttonContainer = document.querySelector('.button-container');
-            const presetContainer = document.getElementById('presetContainer');
-            const addPresetBtn = document.getElementById('addPresetBtn');
+        // 全局状态
+        var isDarkMode = false;
+        var isDrawing = false;
+        var numStudents = 30;
+        var numRounds = 3;
+        var currentRound = 0;
+        var selectedStudents = [];
+        var availableStudents = [];
+        var presets = [];
+        var animationTimer = null;
+        
+        // 开关暗黑模式
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode', isDarkMode);
+            document.getElementById('themeToggle').textContent = isDarkMode ? '☀️' : '🌙';
+        }
+        
+        // 添加预设学生
+        function addPreset() {
+            var container = document.getElementById('presetContainer');
+            var rounds = parseInt(document.getElementById('rounds').value) || 3;
             
-            // 状态变量
-            let inDrawMode = false;           // 是否处于抽号模式
-            let isDrawing = false;            // 是否正在抽号过程中
-            let students = [];                // 可选学生列表
-            let numStudents = 30;             // 总学生数
-            let numRounds = 3;                // 轮数
-            let currentRound = 0;             // 当前轮数(从0开始，显示为1)
-            let selectedStudents = [];        // 当前已选学生
-            let animationTimer = null;        // 动画计时器
-            let presets = [];                 // 预设学生 [{round: 1, student: 5}, ...]
+            // 创建预设项
+            var item = document.createElement('div');
+            item.className = 'preset-item';
             
-            // 添加预设按钮点击事件
-            addPresetBtn.onclick = function() {
-                // 创建新的预设项
-                const presetItem = document.createElement('div');
-                presetItem.className = 'preset-item';
+            // 学生号码输入
+            var studentInput = document.createElement('input');
+            studentInput.type = 'number';
+            studentInput.min = '1';
+            studentInput.placeholder = '学生号码';
+            studentInput.style.width = '40%';
+            
+            // 轮次选择
+            var roundSelect = document.createElement('select');
+            roundSelect.style.width = '40%';
+            
+            for (var i = 1; i <= rounds; i++) {
+                var option = document.createElement('option');
+                option.value = i;
+                option.textContent = '第' + i + '轮';
+                roundSelect.appendChild(option);
+            }
+            
+            // 删除按钮
+            var removeBtn = document.createElement('button');
+            removeBtn.className = 'preset-remove';
+            removeBtn.innerHTML = '&times;';
+            removeBtn.onclick = function() {
+                container.removeChild(item);
+            };
+            
+            // 添加元素
+            item.appendChild(studentInput);
+            item.appendChild(roundSelect);
+            item.appendChild(removeBtn);
+            container.appendChild(item);
+        }
+        
+        // 更新轮次选项
+        function updateRoundOptions() {
+            var rounds = parseInt(document.getElementById('rounds').value) || 3;
+            var selects = document.querySelectorAll('#presetContainer select');
+            
+            selects.forEach(function(select) {
+                var currentValue = select.value;
+                select.innerHTML = '';
                 
-                // 创建学生输入框
-                const studentInput = document.createElement('input');
-                studentInput.type = 'number';
-                studentInput.min = '1';
-                studentInput.style.width = '40%';
-                studentInput.placeholder = '学生号码';
-                
-                // 创建轮次选择框
-                const roundSelect = document.createElement('select');
-                roundSelect.style.width = '40%';
-                
-                // 填充轮次选项
-                const maxRounds = Math.max(1, Math.min(parseInt(roundsInput.value) || 3, 10));
-                for (let i = 1; i <= maxRounds; i++) {
-                    const option = document.createElement('option');
+                for (var i = 1; i <= rounds; i++) {
+                    var option = document.createElement('option');
                     option.value = i;
-                    option.textContent = `第${i}轮`;
-                    roundSelect.appendChild(option);
+                    option.textContent = '第' + i + '轮';
+                    select.appendChild(option);
                 }
                 
-                // 创建删除按钮
-                const deleteBtn = document.createElement('button');
-                deleteBtn.className = 'delete-btn';
-                deleteBtn.innerHTML = '&times;';
-                deleteBtn.onclick = function() {
-                    presetContainer.removeChild(presetItem);
-                };
-                
-                // 添加元素到预设项
-                presetItem.appendChild(studentInput);
-                presetItem.appendChild(roundSelect);
-                presetItem.appendChild(deleteBtn);
-                
-                // 添加预设项到容器
-                presetContainer.appendChild(presetItem);
-            };
+                if (currentValue && parseInt(currentValue) <= rounds) {
+                    select.value = currentValue;
+                }
+            });
+        }
+        
+        // 收集预设
+        function collectPresets() {
+            var result = [];
+            var items = document.querySelectorAll('#presetContainer .preset-item');
             
-            // 轮数变化时更新所有预设的轮次选项
-            roundsInput.oninput = function() {
-                const maxRounds = Math.max(1, Math.min(parseInt(this.value) || 3, 10));
+            items.forEach(function(item) {
+                var studentInput = item.querySelector('input');
+                var roundSelect = item.querySelector('select');
                 
-                // 更新所有预设的轮次选择框
-                const roundSelects = presetContainer.querySelectorAll('select');
-                roundSelects.forEach(select => {
-                    const currentValue = select.value;
-                    select.innerHTML = '';
-                    
-                    for (let i = 1; i <= maxRounds; i++) {
-                        const option = document.createElement('option');
-                        option.value = i;
-                        option.textContent = `第${i}轮`;
-                        select.appendChild(option);
-                    }
-                    
-                    // 如果原来的值在新范围内，则保持选中
-                    if (currentValue && parseInt(currentValue) <= maxRounds) {
-                        select.value = currentValue;
-                    }
-                });
-            };
-            
-            // 收集预设信息
-            function collectPresets() {
-                presets = [];
-                const presetItems = presetContainer.querySelectorAll('.preset-item');
-                
-                presetItems.forEach(item => {
-                    const studentInput = item.querySelector('input');
-                    const roundSelect = item.querySelector('select');
-                    
-                    const student = parseInt(studentInput.value);
-                    const round = parseInt(roundSelect.value);
+                if (studentInput && roundSelect) {
+                    var student = parseInt(studentInput.value);
+                    var round = parseInt(roundSelect.value);
                     
                     if (!isNaN(student) && student > 0 && !isNaN(round) && round > 0) {
-                        presets.push({
-                            student: student,
-                            round: round
-                        });
+                        result.push({student: student, round: round});
                     }
-                });
+                }
+            });
+            
+            return result;
+        }
+        
+        // 清空历史记录
+        function clearHistory() {
+            document.getElementById('historyList').innerHTML = '';
+        }
+        
+        // 切换到抽号模式
+        function switchToDrawMode() {
+            // 获取设置
+            numStudents = parseInt(document.getElementById('totalStudents').value) || 30;
+            numRounds = parseInt(document.getElementById('rounds').value) || 3;
+            presets = collectPresets();
+            
+            // 验证预设
+            var isValid = true;
+            var usedRounds = {};
+            
+            for (var i = 0; i < presets.length; i++) {
+                var preset = presets[i];
                 
-                return presets;
+                // 验证学生号范围
+                if (preset.student < 1 || preset.student > numStudents) {
+                    alert('预设学生号 ' + preset.student + ' 超出范围(1-' + numStudents + ')');
+                    isValid = false;
+                    break;
+                }
+                
+                // 验证轮次不重复
+                if (usedRounds[preset.round]) {
+                    alert('第 ' + preset.round + ' 轮有多个预设学生');
+                    isValid = false;
+                    break;
+                }
+                
+                usedRounds[preset.round] = true;
             }
+            
+            if (!isValid) {
+                return;
+            }
+            
+            // 初始化状态
+            availableStudents = [];
+            for (var i = 1; i <= numStudents; i++) {
+                availableStudents.push(i);
+            }
+            selectedStudents = [];
+            currentRound = 0;
             
             // 清空历史记录
-            function clearHistory() {
-                while (historyList.firstChild) {
-                    historyList.removeChild(historyList.firstChild);
+            clearHistory();
+            
+            // 重置结果显示
+            document.getElementById('resultDisplay').textContent = '?';
+            
+            // 隐藏设置面板，显示抽号面板
+            document.getElementById('configPanel').style.display = 'none';
+            document.getElementById('drawCard').style.display = 'block';
+        }
+        
+        // 切换回设置模式
+        function switchToSettingsMode() {
+            // 清除动画
+            if (animationTimer) {
+                clearTimeout(animationTimer);
+                animationTimer = null;
+            }
+            
+            // 显示设置面板，隐藏抽号面板
+            document.getElementById('configPanel').style.display = 'block';
+            document.getElementById('drawCard').style.display = 'none';
+            
+            // 清空历史记录和结果显示
+            clearHistory();
+            document.getElementById('resultDisplay').textContent = '?';
+            
+            // 重置状态
+            isDrawing = false;
+        }
+        
+        // 抽号
+        function draw() {
+            // 防止重复点击
+            if (isDrawing) {
+                return;
+            }
+            
+            // 检查是否还有轮数
+            if (currentRound >= numRounds) {
+                document.getElementById('resultDisplay').textContent = '已完成所有轮次';
+                return;
+            }
+            
+            // 设置状态
+            isDrawing = true;
+            
+            // 获取当前轮次
+            var roundNumber = currentRound + 1;
+            
+            // 查找预设
+            var preset = null;
+            for (var i = 0; i < presets.length; i++) {
+                if (presets[i].round === roundNumber) {
+                    preset = presets[i];
+                    break;
                 }
             }
             
-            // 设置按钮点击事件
-            setupBtn.onclick = function() {
-                if (!inDrawMode) {
-                    // 从配置模式切换到抽号模式
-                    numStudents = Math.max(1, Math.min(parseInt(totalStudentsInput.value) || 30, 100));
-                    numRounds = Math.max(1, Math.min(parseInt(roundsInput.value) || 3, 10));
+            // 开始动画
+            var resultElement = document.getElementById('resultDisplay');
+            resultElement.textContent = '';
+            resultElement.classList.add('result-animation');
+            
+            var counter = 0;
+            var interval = setInterval(function() {
+                // 显示随机数字
+                var randomNum = Math.floor(Math.random() * numStudents) + 1;
+                resultElement.textContent = randomNum;
+                
+                counter++;
+                if (counter >= 20) {
+                    clearInterval(interval);
                     
-                    // 收集预设
-                    collectPresets();
+                    var selectedStudent;
                     
-                    // 验证预设
-                    let isValid = true;
-                    let usedRounds = {};
-                    
-                    for (let preset of presets) {
-                        // 验证学生号范围
-                        if (preset.student < 1 || preset.student > numStudents) {
-                            alert(`预设学生号 ${preset.student} 超出范围(1-${numStudents})`);
-                            isValid = false;
-                            break;
+                    if (preset) {
+                        // 使用预设学生
+                        selectedStudent = preset.student;
+                        
+                        // 从可选学生中移除
+                        var index = availableStudents.indexOf(selectedStudent);
+                        if (index !== -1) {
+                            availableStudents.splice(index, 1);
                         }
-                        
-                        // 验证轮次范围
-                        if (preset.round < 1 || preset.round > numRounds) {
-                            alert(`预设轮次 ${preset.round} 超出范围(1-${numRounds})`);
-                            isValid = false;
-                            break;
-                        }
-                        
-                        // 验证轮次不重复
-                        if (usedRounds[preset.round]) {
-                            alert(`第 ${preset.round} 轮有多个预设学生`);
-                            isValid = false;
-                            break;
-                        }
-                        
-                        usedRounds[preset.round] = true;
-                    }
-                    
-                    if (!isValid) {
-                        return;
-                    }
-                    
-                    // 初始化状态
-                    students = [];
-                    for (let i = 1; i <= numStudents; i++) {
-                        students.push(i);
-                    }
-                    selectedStudents = [];
-                    currentRound = 0;
-                    
-                    // 清空历史记录
-                    clearHistory();
-                    
-                    // 重置结果显示
-                    resultDisplay.textContent = '?';
-                    resultDisplay.classList.remove('highlight-animation');
-                    
-                    // 隐藏配置面板
-                    configPanel.style.display = 'none';
-                    
-                    // 修改按钮
-                    setupBtn.textContent = '开始抽号';
-                    
-                    // 添加结束按钮
-                    const endBtn = document.createElement('button');
-                    endBtn.className = 'btn btn-danger';
-                    endBtn.textContent = '结束抽号';
-                    endBtn.onclick = function() {
-                        // 清除动画
-                        if (animationTimer) {
-                            clearTimeout(animationTimer);
-                            animationTimer = null;
-                        }
-                        
-                        // 恢复配置模式
-                        configPanel.style.display = 'block';
-                        setupBtn.textContent = '设置并开始';
-                        inDrawMode = false;
-                        isDrawing = false;
-                        
-                        // 重置结果显示
-                        resultDisplay.textContent = '?';
-                        resultDisplay.classList.remove('highlight-animation', 'result-animation');
-                        
-                        // 清空历史记录
-                        clearHistory();
-                        
-                        // 移除结束按钮
-                        endBtn.remove();
-                    };
-                    buttonContainer.appendChild(endBtn);
-                    
-                    // 切换模式
-                    inDrawMode = true;
-                    
-                } else if (!isDrawing) {
-                    // 在抽号模式下点击开始抽号
-                    isDrawing = true;
-                    setupBtn.disabled = true;
-                    
-                    // 确保还有轮数可抽
-                    if (currentRound >= numRounds) {
-                        resultDisplay.textContent = "已完成所有轮次";
-                        isDrawing = false;
-                        setupBtn.disabled = false;
-                        return;
-                    }
-                    
-                    // 检查当前轮次是否有预设学生
-                    const roundNumber = currentRound + 1; // 当前轮次(从1开始显示)
-                    const preset = presets.find(p => p.round === roundNumber);
-                    
-                    // 开始动画 - 无论是否有预设，都进行动画
-                    resultDisplay.textContent = '';
-                    resultDisplay.classList.add('result-animation');
-                    
-                    let frames = 0;
-                    const maxFrames = 20;
-                    const animationSpeed = 100; // 毫秒
-                    
-                    function animate() {
-                        // 显示随机数字
-                        const randomIndex = Math.floor(Math.random() * numStudents) + 1;
-                        resultDisplay.textContent = randomIndex;
-                        
-                        frames++;
-                        
-                        if (frames < maxFrames) {
-                            // 继续动画
-                            animationTimer = setTimeout(animate, animationSpeed);
-                        } else {
-                            // 动画结束
-                            if (preset) {
-                                // 有预设学生，显示预设学生
-                                displayResult(preset.student);
-                            } else {
-                                // 没有预设学生，随机选择
-                                
-                                // 如果学生不足，重置
-                                if (students.length <= 0) {
-                                    students = [];
-                                    for (let i = 1; i <= numStudents; i++) {
-                                        students.push(i);
-                                    }
-                                    // 移除已选学生
-                                    selectedStudents.forEach(student => {
-                                        const index = students.indexOf(student);
-                                        if (index > -1) {
-                                            students.splice(index, 1);
-                                        }
-                                    });
-                                }
-                                
-                                if (students.length > 0) {
-                                    // 洗牌算法
-                                    for (let i = students.length - 1; i > 0; i--) {
-                                        const j = Math.floor(Math.random() * (i + 1));
-                                        [students[i], students[j]] = [students[j], students[i]];
-                                    }
-                                    
-                                    const selectedStudent = students.pop();
-                                    displayResult(selectedStudent);
-                                } else {
-                                    // 没有可选学生
-                                    resultDisplay.classList.remove('result-animation');
-                                    resultDisplay.textContent = "无可选学生";
-                                    isDrawing = false;
-                                    setupBtn.disabled = false;
-                                }
+                    } else {
+                        // 如果没有可选学生，重置
+                        if (availableStudents.length === 0) {
+                            availableStudents = [];
+                            for (var i = 1; i <= numStudents; i++) {
+                                availableStudents.push(i);
                             }
                         }
+                        
+                        // 随机选择
+                        var randomIndex = Math.floor(Math.random() * availableStudents.length);
+                        selectedStudent = availableStudents.splice(randomIndex, 1)[0];
                     }
                     
-                    // 开始动画
-                    animate();
+                    // 显示结果
+                    resultElement.classList.remove('result-animation');
+                    resultElement.textContent = selectedStudent;
+                    
+                    // 播放高亮动画
+                    resultElement.classList.remove('highlight-animation');
+                    void resultElement.offsetWidth; // 重绘
+                    resultElement.classList.add('highlight-animation');
+                    
+                    // 添加到历史记录
+                    var historyItem = document.createElement('div');
+                    historyItem.className = 'history-item highlight-history';
+                    
+                    var now = new Date();
+                    var timeString = now.toLocaleTimeString();
+                    
+                    historyItem.innerHTML = 
+                        '<span>第' + roundNumber + '轮: 学生 ' + selectedStudent + '</span>' +
+                        '<span>' + timeString + '</span>';
+                    
+                    document.getElementById('historyList').prepend(historyItem);
+                    
+                    // 更新轮次
+                    currentRound++;
+                    
+                    // 重置状态
+                    isDrawing = false;
                 }
-            };
-            
-            // 显示结果
-            function displayResult(student) {
-                // 显示结果
-                resultDisplay.classList.remove('result-animation');
-                resultDisplay.textContent = student;
-                
-                // 添加到已选列表
-                if (!selectedStudents.includes(student)) {
-                    selectedStudents.push(student);
-                }
-                
-                // 高亮显示
-                resultDisplay.classList.remove('highlight-animation');
-                void resultDisplay.offsetWidth; // 强制重绘
-                resultDisplay.classList.add('highlight-animation');
-                
-                // 添加历史记录
-                const historyItem = document.createElement('li');
-                historyItem.className = 'history-item highlight-history';
-                
-                const now = new Date();
-                const timeString = 
-                    String(now.getHours()).padStart(2, '0') + ':' + 
-                    String(now.getMinutes()).padStart(2, '0') + ':' + 
-                    String(now.getSeconds()).padStart(2, '0');
-                
-                historyItem.innerHTML = `
-                    <span>第${currentRound + 1}轮: 学生 ${student}</span>
-                    <span>${timeString}</span>
-                `;
-                
-                historyList.insertBefore(historyItem, historyList.firstChild);
-                
-                // 更新轮次
-                currentRound++;
-                
-                // 重置状态
-                isDrawing = false;
-                setupBtn.disabled = false;
-            }
-            
-            // 添加一个初始预设项
-            addPresetBtn.click();
+            }, 100);
+        }
+        
+        // 页面加载时添加一个预设
+        window.onload = function() {
+            addPreset();
         };
     </script>
 </body>
